@@ -10,8 +10,32 @@
 
 body {
 	@include background(#444);
+	font-family: "Gill Sans", sans-serif;
 }
 
+h1 {
+	font-size: 2em;
+}
+
+.navbar {
+	@include background(linear-gradient(lighten(#111, 10%), #111));
+	border: none;
+	@include border-radius(0);
+	text-align: center;
+	text-transform: uppercase;
+	font-weight: bold;
+}
+.navbar-header {
+	display: inline-block;
+	float: none;
+	.navbar-brand {
+		float: none;
+		color: white;
+		&:hover {
+			color: white;
+		}
+	}
+}
 .loading {
 	position: absolute;
 	top: 0;

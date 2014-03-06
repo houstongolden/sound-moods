@@ -101,6 +101,37 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
 }
 body {
   background: #444444;
+  font-family: "Gill Sans", sans-serif;
+}
+
+h1 {
+  font-size: 2em;
+}
+
+.navbar {
+  background: -moz-linear-gradient(#2b2b2b, #111111);
+  background: -o-linear-gradient(#2b2b2b, #111111);
+  background: -webkit-linear-gradient(#2b2b2b, #111111);
+  background: linear-gradient(#2b2b2b, #111111);
+  border: none;
+  -moz-border-radius: 0;
+  -webkit-border-radius: 0;
+  border-radius: 0;
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.navbar-header {
+  display: inline-block;
+  float: none;
+}
+.navbar-header .navbar-brand {
+  float: none;
+  color: white;
+}
+.navbar-header .navbar-brand:hover {
+  color: white;
 }
 
 .loading {
