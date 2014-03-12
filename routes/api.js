@@ -8,8 +8,13 @@ var Server = mongo.Server,
 	Db = mongo.Db,
 	BSON = mongo.BSONPure;
 
-
+if('production' == app.get('env')){
+	console.log(app.get('env'));
+}
 var server = new Server('localhost', 27017, {auto_reconnect: true});
+if(!server){
+	server = process.env.MONGOLAB_URI;
+}
 db = new Db('soundmoods', server);
 
 function populateDB(){
