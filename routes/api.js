@@ -8,11 +8,14 @@ var Server = mongo.Server,
 	Db = mongo.Db,
 	BSON = mongo.BSONPure;
 
-var server = new Server('localhost', 27017, {safe: false, auto_reconnect: true});
-if(!server){
-	server = process.env.MONGOLAB_URI;
-}
-db = Db.connect(server);
+var mongoUri = process.env.MONGOLAB_URI ||
+  process.env.MONGOHQ_URL ||
+  'mongodb://127.0.0.1:27017/soundmoods';
+// var server = new Server('localhost', 27017, {safe: false, auto_reconnect: true});
+// if(!server){
+// 	server = process.env.MONGOLAB_URI;
+// }
+db = Db.connect(mongoUri);
 
 function populateDB(){
 	db.collection('moods', function(err, collection){
