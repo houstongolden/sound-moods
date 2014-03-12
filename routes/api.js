@@ -8,11 +8,11 @@ var Server = mongo.Server,
 	Db = mongo.Db,
 	BSON = mongo.BSONPure;
 
-var server = new Server('localhost', 27017, {auto_reconnect: true});
+var server = new Server('localhost', 27017, {safe: false, auto_reconnect: true});
 if(!server){
 	server = process.env.MONGOLAB_URI;
 }
-db = new Db('heroku_app22789510', server);
+db = Db.connect(server);
 
 function populateDB(){
 	db.collection('moods', function(err, collection){
