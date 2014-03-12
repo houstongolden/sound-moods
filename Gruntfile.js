@@ -6,6 +6,26 @@ module.exports = function(grunt) {
 
     pkg: grunt.file.readJSON('package.json'),
 
+    karma: {
+      unit: {
+        configFile: 'karma.conf.js',
+        autoWatch: true,
+        browsers: ['PhantomJS']
+      }
+    },
+
+    jasmine: {
+      soundcollage: {
+        src: 'public/js/**/*.js',
+        options: {
+          specs: 'tests/specs/*Spec.js',
+          outfile: 'tests/SpecRunner.html',
+          display: 'full',
+          summary: true
+        }
+      }
+    },
+
     compass: {
       dev: {
         options: {
@@ -37,18 +57,20 @@ module.exports = function(grunt) {
         tasks: ['compass:dev']
       }
     },
-    shell: {
-      startServer: {
-        command: 'nodemon app.js',
+    express: {
+      dev: {
         options: {
-          async: true
+          script: 'app.js',
+          background: true
         }
       }
     }
+
   });
 
-  grunt.registerTask('default', ['shell', 'compass:dev', 'watch']);
+  grunt.registerTask('default', ['express', 'compass:dev', 'watch']);
 
+  grunt.registerTask('test', ['karma']);
   // grunt.registerTask('build', ['compass:build', 'uglify']);
 
 };
