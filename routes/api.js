@@ -28,7 +28,7 @@ function populateDB(){
 }
 
 db.open(function(err, db){
-	db.collection('moods', {strict: true}, function(err, collection){
+	db.collection('users', {strict: true}, function(err, collection){
 		if(err){
 			populateDB();
 		}
