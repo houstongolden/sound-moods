@@ -12,6 +12,7 @@ var server = new Server('localhost', 27017, {auto_reconnect: true});
 if(!server){
 	server = process.env.MONGOLAB_URI;
 }
+console.log(server);
 db = new Db('heroku_app22789510', server);
 
 function populateDB(){
