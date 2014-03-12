@@ -29,7 +29,7 @@ if ('development' == app.get('env')) {
 
 app.get('/', routes.index);
 
-// users
+// moods
 app.get('/moods', moods.findAll);
 app.get('/moods/:id', moods.findById);
 app.post('/moods', moods.addMood);

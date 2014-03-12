@@ -225,72 +225,81 @@ function SingleMoodCtrl($scope, $routeParams, $http){
 	var self = this;
 	this.API = API.init($scope);
 
-	function hexToRgb(hex) {
-	    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-	    return result ? {
-	        r: parseInt(result[1], 16),
-	        g: parseInt(result[2], 16),
-	        b: parseInt(result[3], 16)
-	    } : null;
-	}
-	function randColor(base){
-		var rand = Math.random();
-		var randomOffset = function(){
-			return (Math.random() * 10);
-		}
-		var newColor = {};
-		if(rand > 0.5){
-			newColor.r = Math.floor(base.r + randomOffset() % 255);
-			newColor.g = Math.floor(base.g + randomOffset() % 255);
-			newColor.b = Math.floor(base.b + randomOffset() % 255);
-		}else {
-			newColor.r = Math.floor(base.r - randomOffset() % 255);
-			newColor.g = Math.floor(base.g - randomOffset() % 255);
-			newColor.b = Math.floor(base.b - randomOffset() % 255);
-		}
-		return newColor;
-	}
-	function randomPosition(){
-		var rgbaBase = hexToRgb($scope.mood.color);
-
-		$('.mood-item').each(function(){
-			
-			var rand = (Math.random() * 1000);
-			var diameter = rand + 120;
-			var margin = 50;
-			var lastPos = {
-				rand: rand,
-				diameter: diameter
+	var helpers = {
+		
+		hexToRgb: function(hex) {
+		    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+		    return result ? {
+		        r: parseInt(result[1], 16),
+		        g: parseInt(result[2], 16),
+		        b: parseInt(result[3], 16)
+		    } : null;
+		},
+		randColor: function(base){
+			var rand = Math.random();
+			var randomOffset = function(){
+				return (Math.random() * 100);
 			};
-
-			var checkPos = function(pos){
-				for(var i = 0; i < lastPos.diameter; i++){
-					if (lastPos.rand == i){
-						// push off that position (artificial intelligence)
-						pos += lastPos.margin
-					}
-				}
-				return pos;
+			var newColor = {};
+			if(rand > 0.5){
+				newColor.r = Math.floor(base.r + randomOffset() % 255);
+				newColor.g = Math.floor(base.g + randomOffset() % 255);
+				newColor.b = Math.floor(base.b + randomOffset() % 255);
+			}else {
+				newColor.r = Math.floor(base.r - randomOffset() % 255);
+				newColor.g = Math.floor(base.g - randomOffset() % 255);
+				newColor.b = Math.floor(base.b - randomOffset() % 255);
 			}
+			return newColor;
+		},
 
-			$(this).css({
-				opacity: 1,
-				top: Math.floor(checkPos(Math.random() * 500)),
-				left: Math.floor(checkPos(Math.random() * 500))
-			});
+		randomPosition: function(){
+			var rgbaBase = this.hexToRgb($scope.mood.color);
+			var self = this;
 
-			var color = randColor(rgbaBase);
-			$(this).find('a').css({
-				'background-color': 'rbg(' + color.r + ',' + color.g + ','+ color.b + ')'
+			$('.mood-item').each(function(){
+				
+				var $link = $(this).find('a');
+
+				var rand = (Math.random() * 1000);
+				var diameter = rand + 120;
+				var margin = 50;
+				var lastPos = {
+					rand: rand,
+					diameter: diameter
+				};
+
+				var checkPos = function(pos){
+					for(var i = 0; i < lastPos.diameter; i++){
+						if (lastPos.rand == i){
+							// push off that position (artificial intelligence)
+							pos += lastPos.margin
+						}
+					}
+					return pos;
+				};
+
+				$(this).css({
+					opacity: 1,
+					top: Math.floor(checkPos(Math.random() * 500)),
+					left: Math.floor(checkPos(Math.random() * 500))
+				});
+
+				var color = self.randColor(rgbaBase);
+				var colorString = 'rgba(' + color.r + ', ' + color.g + ', ' + color.b + ', 1.0)';
+
+				$link.css({'background-color': colorString})
+					.on('click', function(e){
+						self.API.stopAllPlaying(e);
+						// self.API.toggleTrack(e);
+					});
 			});
-		}).on('click', function(e){
-			$scope.currentPlaying = $(this).data('name');
-			self.API.stopAllPlaying(e);
-			self.API.toggleTrack(e);
-		});
-	}
+		}
+
+	};
+
 	$http.get('/moods/' + $routeParams.id).success(function(data){
 		$scope.mood = data;
-		setTimeout(function(){ randomPosition(); }, 1000);
+		setTimeout(function(){ helpers.randomPosition(); }, 500);
 	});
 }

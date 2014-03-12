@@ -65,17 +65,6 @@ var API = {
 		return d.promise();
 	},
 
-	createWidget: function(){
-
-		var self = this;
-		var widget = SC.Widget($('iframe')[0]);
-
-		widget.bind(SC.Widget.Events.PLAY, function(data){
-			// $('.player').html('<h1>Loading...</h1>');
-		});
-
-	},
-
 	stopAllPlaying: function(e){
 
 		if (!!e){

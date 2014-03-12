@@ -366,6 +366,21 @@ strong {
 		@include transform(scale(1.1));
 	}
 }
+.mood-ready {
+	&:after {
+		content: '';
+		position: absolute;
+		top: 35%;
+		left: 45%;
+		border-top: 15px solid transparent;
+		border-bottom: 15px solid transparent;
+		border-right: 25px solid transparent;
+		border-left: 25px solid #444;
+	}
+}
+.mood-playing {
+
+}
 .add-mood {
 	&:after {
 		position: relative;
