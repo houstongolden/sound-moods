@@ -1,3 +1,5 @@
-# SoundCollage
+# Sound Moods
 
-Create a collage of your favorite music from SoundCloud.
+Create sound moods of your favorite music from SoundCloud.
+
+An app built with Angular.js, Express.js, and MongoDB.
