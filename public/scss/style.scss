@@ -1,29 +1,114 @@
 @import "compass";
 @import "animation";
+@import "animation/animate";
 
 @include global-reset();
+
 
 @include keyframes(spin){
 	0% {}
 	100% { @include transform(rotate(360deg)) }
 }
 
+html, body {
+	min-height: 100%;
+	height: 100%;
+}
+
 body {
-	@include background(#444);
 	font-family: "Gill Sans", sans-serif;
+	background-color: #eee;
+	color: #444;
+	font-weight: 100;
 }
 
 h1 {
-	font-size: 2em;
+	font-size: 1.8em;
 }
-
+h4 {
+	font-size: 1.5em;
+	line-height: 2em;
+}
+strong {
+	font-weight: 600;
+}
+.intro {
+	margin: 2em;
+	.animate-title {
+		@include animation(bounceIn);
+	}
+	.greeting-text {
+		margin-top: 4em;
+		text-align: center;
+		@for $i from 1 through 5 {
+			.text-#{$i} {
+				@include transition(all 0.3s ease ($i * 0.1s));
+				@include opacity(0);
+				@include transform(translateY(2em));
+				font-size: 2em;
+				line-height: 1.5em;
+			}
+		}
+		.text-3 {
+			margin-top: 1.5em;
+			font-size: 1.2em;
+			color: lighten(#000, 20%);
+		}
+		.text-4 {
+			font-size: 1.2em;
+			color: lighten(#000, 20%);
+		}
+	}
+}
+.login-container {
+	text-align: center;
+	margin-top: 4em;
+}
+.facebook-login {
+	position: relative;
+	border: 0;
+	background-color: #4c66a4;
+	min-width: 200px;
+	min-height: 40px;
+	padding: 0.5em 2em;
+	outline: none;
+	color: #fff;
+	font-weight: bold;
+	@include transition(all 0.3s ease);
+	@include opacity(0);
+	@include transform(translateY(1em));
+	@include box-shadow(rgba(0, 0, 0, 0.2) 0px 0px 5px);
+	&:hover {
+		color: #fff;
+		background-color: darken(#4c66a4, 10%);
+		@include transform(scale(0.3));
+	}
+	&:active {
+		background-color: darken(#4c66a4, 20%);
+	}
+	&:after {
+		content: '';
+		background-color: rgba(51, 51, 51, 0.21);
+		width: 100%;
+		height: 50%;
+		@include filter(blur(10px));
+		position: absolute;
+		bottom: -100%;
+		left: 0;
+		@include border-radius(50%);
+		z-index: 1000;
+	}
+}
 .navbar {
 	@include background(linear-gradient(lighten(#111, 10%), #111));
 	border: none;
 	@include border-radius(0);
 	text-align: center;
-	text-transform: uppercase;
-	font-weight: bold;
+	font-weight: 800;
+	margin: 0;
+	a {
+		text-decoration: none;
+	}
 }
 .navbar-header {
 	display: inline-block;
@@ -34,6 +119,263 @@ h1 {
 		&:hover {
 			color: white;
 		}
+	}
+}
+#menu {
+	height: 100%;
+	margin-right: 2em;
+	display: inline-block;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	right: 10%;
+	margin: auto;
+	vertical-align: middle;
+	font-weight: 100;
+	.dropdown {
+		height: 100%;
+		.dropdown-toggle {
+			color: #fff;
+			position: relative;
+			top: 6px;
+		}
+	}
+}
+
+.main-app-view {
+	overflow: hidden;
+	height: 100%;
+	div[ng-view]{
+		height: inherit;
+		overflow: hidden;
+		.row {
+			height: inherit;
+		}
+	}
+}
+.mood-title {
+	margin-top: 2em;
+	color: #fff;
+	font-weight: bold;
+}
+.mood-circle {
+	display: block;
+	background-color: #fff;
+	border: 1px solid #ccc;
+	@include border-radius(50%);
+	@include box-shadow(rgba(68, 68, 68, 0.14) 0px 0px 10px);
+	@include transition(all 0.2s ease);
+	@include transform(scale(0.8));
+	width: 500px;
+	height: 500px;
+	margin: 0 auto;
+	margin-top: 2em;
+	text-align: center;
+	h2 {
+		position: relative;
+		top: 40%;
+		font-size: 1.8em;
+		color: #444;
+		a {
+			position: relative;
+			display: inline-block;
+			font-size: 1.8em;
+			margin-top: 0.5em;
+			color: #444;
+			text-decoration: none;
+		}
+	}
+	.mood-color-picker {
+		display: block;
+		position: relative;
+		top: 30%;
+		overflow: hidden;
+		border: 1px solid #444;
+		@include border-radius(50%);
+		@include transition(all 0.5s ease);
+		width: 100px;
+		height: 100px;
+		min-height: 100px;
+		margin: 0 auto;
+		input[type="color"] {
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: -10%;
+			right: 0;
+			margin: auto;
+			width: 120%;
+			height: 120%;
+			@include appearance(none);
+		}
+		&:hover {
+			cursor: pointer;
+			@include box-shadow(rgba(68, 68, 68, 0.14) 0px 0px 10px inset);
+		}
+	}
+	.mood-name-input {
+		margin: 0 auto;
+		position: relative;
+		top: 30%;
+		.mood-color {
+			min-height: 1.5em;
+			font-weight: bold;
+		}
+		input[name="mood-name"] {
+			color: #444;
+			font-size: 1.2em;
+			min-width: 300px;
+			margin-top: 2em;
+			padding: 0.5em;
+			outline: none;
+			border: 1px solid #444;
+			@include border-radius(20px);
+			text-indent: 10px;
+			&:focus {
+				@include box-shadow(rgba(68, 68, 68, 0.43) 0px 0px 5px inset);
+			}
+		}	
+	}
+}
+.mood-search-list {
+	height: 100%;
+	input[name="mood-track"]{
+		color: #444;
+		font-size: 1.1em;
+		width: 90%;
+		margin-top: 1em;
+		padding: 0.5em;
+		outline: none;
+		border: 1px solid #444;
+		@include border-radius(20px);
+		text-indent: 10px;
+	}
+}
+.tracks-selected-container {
+	position: absolute;
+	top: 20%;
+	left: 60%;
+	color: #444;
+	min-width: 300px;
+	max-width: 500px;
+	overflow: scroll;
+	height: 80%;
+	.tracks-selected-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		li {
+			font-size: 1.2em;
+			color: #444;
+			margin: 1em;
+			img {
+				display: inline-block;
+				vertical-align: middle;
+				margin-right: 0.5em;
+				@include border-radius(50%);;
+			}
+			a {
+				display: inline-block;
+				vertical-align: middle;
+				text-decoration: none;
+				margin-left: 0.5em;
+				max-width: 80%;
+			}
+		}
+	}
+}
+.tracks-listing-container {
+	position: relative;
+	max-width: 80%;
+	height: 80%;
+	margin-left: 3em;
+	overflow: scroll;
+	margin-top: 1em;
+	.tracks-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		li {
+			font-size: 1.2em;
+			color: #444;
+			margin: 1em;
+			img {
+				display: inline-block;
+				vertical-align: middle;
+				margin-right: 0.5em;
+				@include border-radius(50%);;
+			}
+			a {
+				display: inline-block;
+				vertical-align: middle;
+				text-decoration: none;
+				margin-left: 0.5em;
+				max-width: 80%;
+			}
+		}
+	}
+}
+.draggable-item {
+	list-style: none;
+	display: inline-block;
+	vertical-align: middle;
+	margin-right: 0.5em;
+	@include border-radius(50%);;
+}
+.mood-tracks {
+	position: relative;
+	height: 100%;
+	.big-mood-circle {
+		position: absolute;
+		background-color: #fff;
+		left: -170%;
+		top: -50%;
+		width: 300%;
+		height: 300%;
+		@include border-radius(50%);
+		h2 {
+			font-size: 1.5em;
+			margin-bottom: 1em;
+		}
+	}
+}
+.mood-home-list {
+	display: inline-block;
+	vertical-align: middle;
+	.mood-item {
+		display: inline-block;
+		vertical-align: top;
+		text-align: center;
+		margin: 1em;
+	}
+}
+.mood-circle-sm {
+	display: inline-block;
+	margin: 0 auto;
+	position: relative;
+	text-align: center;
+	width: 120px;
+	height: 120px;
+	@include background(#ccc);
+	@include border-radius(50%);
+	@include box-shadow(rgba(68, 68, 68, 0.14) 0px 0px 10px);
+	@include transition(all 0.3s ease);
+	@include backface-visibility(hidden);
+	&:hover {
+		cursor: pointer;
+		@include transform(scale(1.1));
+	}
+}
+.add-mood {
+	&:after {
+		position: relative;
+		display: inline-block;
+		content: '+';
+		color: #444;
+		font-size: 3em;
+		font-weight: 800;
+		top: 50%;
+		margin-top: -1.5em;
 	}
 }
 .loading {
@@ -51,7 +393,7 @@ h1 {
 		width: 50px;
 		height: 50px;
 		background-color: transparent;
-		border: 1px solid #fff;
+		border: 1px solid #444;
 		@include border-radius(50%);
 		@include animation(spin 0.5s linear infinite);
 		&:after {
@@ -62,7 +404,21 @@ h1 {
 			height: 10px;
 			position: relative;
 			top: 20px;
-			background: #fff;
+			background: #444;
 		}
+	}
+}
+.mood-player-container {
+	position: relative;
+	@include transition(all 0.5s ease);
+	.mood-item {
+		@include transition(all 0.5s ease-in-out);
+		opacity: 0;
+		position: absolute;
+		left: 0;
+		right: 0;
+	}
+	.playing {
+		@include transform(scale(1.5));
 	}
 }
