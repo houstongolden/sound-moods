@@ -1,0 +1,16 @@
+<div class="container">
+	<div class="row">
+		<div class="col-md-12" style="margin-top: 200px">
+			<ul ng-show="moods.length" class="mood-home-list">
+				<li ng-repeat="mood in moods" class="mood-item" style="background-color={{mood.color}}">
+					<a ng-href="#/mood-player/{{mood._id}}" class="mood-circle-sm" style="background-image: url('{{mood.tracks[0].artwork}}'); background-repeat: no-repeat; background-size: cover"></a>
+					<h4 style="color: {{mood.color}}">{{mood.name}}</h4>
+				</li>
+				<li class="mood-item">
+					<a href="#/moods/create/color" class="mood-circle-sm add-mood"></a>
+					<h4>Create a new <strong>mood</strong>.</h4>
+				</li>
+			</ul>
+		</div>
+	</div>
+</div>
