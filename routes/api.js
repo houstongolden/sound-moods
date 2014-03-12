@@ -12,7 +12,6 @@ var server = new Server('localhost', 27017, {auto_reconnect: true});
 if(!server){
 	server = process.env.MONGOLAB_URI;
 }
-console.log(server);
 db = new Db('heroku_app22789510', server);
 
 function populateDB(){
@@ -29,7 +28,7 @@ function populateDB(){
 }
 
 db.open(function(err, db){
-	db.collection('users', {strict: true}, function(err, collection){
+	db.collection('moods', {strict: true}, function(err, collection){
 		if(err){
 			populateDB();
 		}
