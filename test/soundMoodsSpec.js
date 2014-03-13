@@ -1,7 +1,19 @@
 describe("soundMoods", function() {
 
-  beforeEach(function() {
-  });
+  beforeEach(module('soundMoods'));
+
+  describe('moods', function(){
+    it('should populate with mood models or an empty string', inject(function(Mood){
+      var moods = Mood;
+      for(var mood in moods){
+        if(mood == ''){
+          expect(mood).toEqual('');
+        }else {
+          expect(mood).toBeDefined();
+        }
+      }
+    }))
+  })
 
   it("should load Facebook script", function() {
     

@@ -14,14 +14,9 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'public/js/lib/jquery.min.js',
-      'public/js/lib/jquery-ui.min.js',
-      'public/js/lib/angular.min.js',
-      'public/js/lib/angular-resource.js',
-      'public/js/lib/angular-route.js',
-      'public/js/lib/angular-animate.js',
-      'public/js/**/*.js',
-      'test/**/*Spec.js'
+        'public/js/**/*.min.js',
+        'public/js/**/*.js',
+        'test/**/*Spec.js'
     ],
 
 

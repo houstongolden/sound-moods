@@ -1,16 +1,14 @@
-angular.module('soundMoods.controllers', ['apiService'])
-	.controller('AppCtrl', ['$scope', '$routeParams', '$location', 'Mood', 'Facebook', AppCtrl])
-	.controller('MoodCtrl', ['$scope', '$rootScope', '$location', MoodCtrl])
-	.controller('ApiCtrl', ['$scope', '$rootScope', '$location', '$routeParams', 'Mood', '$http', '$firebase', ApiCtrl])
+angular.module('soundMoods.controllers', [])
+	.controller('AppCtrl', ['$scope', '$routeParams', '$location', 'Facebook', 'syncData', 'User', AppCtrl])
 	.controller('LoginCtrl', ['$scope', '$rootScope', LoginCtrl])
+	.controller('MoodCtrl', ['$scope', '$rootScope', '$location','Mood', MoodCtrl])
+	.controller('ApiCtrl', ['$scope', '$rootScope', '$location', '$routeParams', '$http', '$firebase', 'Mood', ApiCtrl])
 	.controller('SingleMoodCtrl', ['$scope', '$routeParams', '$http', SingleMoodCtrl]);
 
-function AppCtrl($scope, $routeParams, $location, Mood, Facebook){
+function AppCtrl($scope, $routeParams, $location, Facebook, syncData, User){
 
-	$scope.loggedIn = false;
-	$scope.currentUser = '';
-	$scope.moods = Mood.query();
-	$scope.mood = {};
+	$scope.user = User;
+	$scope.moods = syncData('moods', 10);
 
 	$scope.$watch(function(){
 		return Facebook.isReady();
@@ -19,12 +17,12 @@ function AppCtrl($scope, $routeParams, $location, Mood, Facebook){
 	});
 	
 	// Login through Facebook
-	$scope.login = function() {
-		if(!$scope.loggedIn){
+	$scope.login = function(user) {
+		if(!user.loggedIn){
 			Facebook.login(function(response) {
 			  	$scope.$apply(function(){
 			  		console.log('Logged in to Facebook!!');
-			  		$scope.me();
+			  		$scope.me(user);
 			  	});
 			});
 		} else {
@@ -32,23 +30,23 @@ function AppCtrl($scope, $routeParams, $location, Mood, Facebook){
 		}
 	};
 
-	$scope.me = function() {
-		if(!$scope.loggedIn){
+	$scope.me = function(user) {
+		if(!user.loggedIn){
 			Facebook.api('/me', function(response) {
 				$scope.$apply(function() {
-				  	$scope.loggedIn = true;
-				  	$scope.currentUser = response;
+				  	user.loggedIn = true;
+				  	user = response;
 				  	$location.url('/moods');
 				});
 			});
 		}
 	};
 
-	$scope.getLoginStatus = function() {
+	$scope.getLoginStatus = function(user) {
 		Facebook.getLoginStatus(function(response) {
 			if(response.status == 'connected') {
 				$scope.$apply(function() {
-					$scope.loggedIn = true;
+					user.loggedIn = true;
 					if($location.path() !== '/login'){
 						$location.url($location.path());
 					}else if ($location.path() == '/moods'){
@@ -59,7 +57,7 @@ function AppCtrl($scope, $routeParams, $location, Mood, Facebook){
 				});
 			} else {
 				$scope.$apply(function() {
-					$scope.loggedIn = false;
+					user.loggedIn = false;
 					$location.url('/login');
 					console.error('not logged in');
 				});
@@ -67,7 +65,7 @@ function AppCtrl($scope, $routeParams, $location, Mood, Facebook){
 		});
 	};
 
-	$scope.getLoginStatus();
+	$scope.getLoginStatus($scope.user);
 }
 
 function LoginCtrl($scope, $rootScope){
@@ -101,11 +99,12 @@ function LoginCtrl($scope, $rootScope){
 
 }
 
-function MoodCtrl($scope, $rootScope, $location){
+function MoodCtrl($scope, $rootScope, $location, Mood){
 
 	var self = this;
-	
-	$scope.mood.query = '';
+	this.API = API.init($scope);
+
+	$scope.mood = Mood;
 
 	$scope.setMoodColor = function(color){
 		$scope.mood.color = color;
@@ -117,115 +116,111 @@ function MoodCtrl($scope, $rootScope, $location){
 		$scope.mood.name = name;
 	}
 
-	$('.mood-color').css({'color': $scope.mood.color});
-	$('head').append('<style>.playing > a {color: ' + $scope.mood.color + ';}</style>');
-
-	this.API = API.init($scope);
+	$scope.addMood = function(mood){
+		$scope.moods.$add(mood);
+		mood = null;
+	}
 
 	$scope.searchApi = function(query){
 		console.log(query)
 		self.API.search(query);
 	}
 
-	$('input[name="mood-track"]').change(function(){
-		$scope.query = $(this).val();
-	}).on('keydown', function(e){
-		if(e.keyCode == 13){
-			self.API.search($(this).val());
-		}
-	});
+	$('.mood-color').css({'color': $scope.mood.color});
+	$('head').append('<style>.playing > a {color: ' + $scope.mood.color + ';}</style>');
 
-	$('.big-mood-circle').droppable({
-		drag: function(){
-			if(!$(this).css({color: "#ccc"})){
-				$(this).css({
-					color: '#ccc'
-				});
-			}
-		},
-		drop: function(e, ui){
-			var el = $(ui.draggable).detach();
-			$(this).find('.tracks-selected-list').append(el);
-		}
-	});
+	// $('.big-mood-circle').droppable({
+	// 	drag: function(){
+	// 		if(!$(this).css({color: "#ccc"})){
+	// 			$(this).css({
+	// 				color: '#ccc'
+	// 			});
+	// 		}
+	// 	},
+	// 	drop: function(e, ui){
+	// 		var el = $(ui.draggable).detach();
+	// 		$(this).find('.tracks-selected-list').append(el);
+	// 	}
+	// });
 
-	$('#create-mood').click(function(){
-		$scope.selectedTracks = [];
-		$('.tracks-selected-list li').each(function(){
-			$scope.selectedTracks.push({ trackId: $(this).data('track-id') });
-		});
-	});
+	// $('#create-mood').click(function(){
+	// 	$scope.selectedTracks = [];
+	// 	$('.tracks-selected-list li').each(function(){
+	// 		$scope.selectedTracks.push({ trackId: $(this).data('track-id') });
+	// 	});
+	// });
 }
 
-function ApiCtrl($scope, $rootScope, $location, $routeParams, Mood, $http, $firebase){
+function ApiCtrl($scope, $rootScope, $location, $routeParams, $http, $firebase, Mood){
 	var self = this;
 
 	$scope.tracks = [];
 	$scope.query = '';
-	
+	$scope.mood = Mood;
+	$scope.current = {
+		sound: null,
+		playing: false
+	};
+
 	this.API = API.init($scope);
 
 	$('.mood-color').css({'color': $scope.mood.color});
-
 	$('head').append('<style>.playing > a {color: ' + $scope.mood.color + ';}</style>');
 
-	$('input[name="mood-track"]').change(function(){
-		$scope.query = $(this).val();
-	}).on('keydown', function(e){
-		if(e.keyCode == 13){
-			self.API.search($(this).val());
-		}
-	});
+	$scope.search = function($event, query){
 
-	$('.big-mood-circle').droppable({
-		drag: function(){
-			if(!$(this).css({color: "#ccc"})){
-				$(this).css({
-					color: '#ccc'
-				});
-			}
-		},
-		drop: function(e, ui){
-			var el = $(ui.draggable).detach();
-			$(this).find('.tracks-selected-list').append(el);
-		}
-	});
-
-	$('#create-mood').click(function(e){
-		e.preventDefault();
-		console.log($scope.mood);
-		$scope.newMood = {
-			name: $scope.mood.name,
-			color: $scope.mood.color,
-			tracks: []
-		};
-
-		if($('.tracks-selected-list li').length > 0){
-
-			$('.tracks-selected-list li').each(function(){
-				var $track = $(this);
-				$scope.newMood.tracks.push({
-					name: $track.find('a').text(),
-					soundCloudId: $track.find('a').data('track-id'),
-					soundCloudUrl: $track.find('a').attr('href'),
-					artwork: $track.find('img').attr('src')
-				});
+		var pageSize = 20;
+		var offset = 0;		
+		if($event.keyCode == 13){
+			$scope.loading = true;
+			SC.get('/tracks', { limit: pageSize, offset: offset, q: query }, function(tracks) {
+				$scope.$apply(function(){
+					$scope.loading = false;
+					$scope.tracksList = tracks;
+				})
 			});
-			
-			$scope.moods = $firebase(moodsRef);
-				// $scope.moodRef.$add($scope)
-				// $location.url('/moods');
-			$http.post('/moods', $scope.newMood).success(function(data){
-				$location.url('/moods');
-			});
-
-		} else {
-			alert('Add some tracks to your mood');
 		}
-	});
+
+	}
+
+	$scope.toggleTrack = function(track){
+		if(!$scope.current.playing){
+			SC.stream("/tracks/" + track.id, function(sound){
+				$scope.current.sound = sound;
+				$scope.current.playing = true;
+			  	sound.play();
+			});
+		}else {
+			$scope.current.playing = false;
+			$scope.current.sound.stop();
+			$scope.current.sound = null;
+		}
+	}
+
+	$scope.addTrack = function(track){
+
+	}
+
+	$scope.createMood = function(mood){
+
+	}
+	// $('.big-mood-circle').droppable({
+	// 	drag: function(){
+	// 		if(!$(this).css({color: "#ccc"})){
+	// 			$(this).css({
+	// 				color: '#ccc'
+	// 			});
+	// 		}
+	// 	},
+	// 	drop: function(e, ui){
+	// 		var el = $(ui.draggable).detach();
+	// 		$(this).find('.tracks-selected-list').append(el);
+	// 	}
+	// });
 }
 
 function SingleMoodCtrl($scope, $routeParams, $http){
+	
 	var self = this;
 	this.API = API.init($scope);
 
@@ -240,17 +235,17 @@ function SingleMoodCtrl($scope, $routeParams, $http){
 	function randColor(base){
 		var rand = Math.random();
 		var randomOffset = function(){
-			return (Math.random() * 10);
+			return (Math.random() * 10) % 255;
 		}
 		var newColor = {};
 		if(rand > 0.5){
-			newColor.r = Math.floor(base.r + randomOffset() % 255);
-			newColor.g = Math.floor(base.g + randomOffset() % 255);
-			newColor.b = Math.floor(base.b + randomOffset() % 255);
+			for(var color in base){
+				newColor[color] = Math.floor(base[color] + randomOffset())
+			}
 		}else {
-			newColor.r = Math.floor(base.r - randomOffset() % 255);
-			newColor.g = Math.floor(base.g - randomOffset() % 255);
-			newColor.b = Math.floor(base.b - randomOffset() % 255);
+			for(var color in base){
+				newColor[color] = Math.floor(base[color] - randomOffset())
+			}
 		}
 		return newColor;
 	}

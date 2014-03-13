@@ -4,14 +4,22 @@
 			<div class="tracks-selected-container">
 				<h2>Add <strong>tracks</strong> to <span class="mood-color">{{mood.name}}</span></h2>
 				<ul class="tracks-selected-list"></ul>
-				<a href="#" id="create-mood">Create Mood</a>
+				<a ng-click="createMood(mood)" href="#" id="create-mood">Create Mood</a>
 			</div>
 		</div>
 	</div>
 	<div class="mood-search-list col-md-6 col-md-offset-1">
-		<input ng-model="mood.query" type="text" placeholder="Search for a sound..." name="mood-track"></input>
+		<input ng-keydown="search($event, mood.query)" ng-model="mood.query" type="text" placeholder="Search for a sound..." name="mood-track"></input>
 		<div class="tracks-listing-container">
-			<ul class="tracks-list"></ul>
+			<div ng-show="loading" class="loading">
+				<span class="spinner"></span>
+			</div>
+			<ul ng-hide="loading" class="tracks-list">
+				<li ng-repeat="track in tracksList" class="track-item">
+					<img width="50" src="{{track.artwork_url}}">
+					<a ng-click="toggleTrack(track)" data-track-id="{{track.id}}">{{track.title}}</a>
+				</li>
+			</ul>
 		</div>
 	</div>
 </div>

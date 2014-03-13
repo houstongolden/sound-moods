@@ -3,11 +3,14 @@ angular.module('soundMoods', [
 		'ngAnimate',
 		'soundMoods.controllers',
 		'soundMoods.config',
+		'soundMoods.directives',
+		'soundMoods.services',
 		'facebook',
 		'firebase'
-	]).config(function($routeProvider, $locationProvider, FacebookProvider, FBID){
+	]).config(function($routeProvider, $locationProvider, FacebookProvider, FBID, SCID){
 
 		FacebookProvider.init(FBID);
+		SC.initialize({client_id: SCID});
 		
 		// routes
 		$routeProvider
