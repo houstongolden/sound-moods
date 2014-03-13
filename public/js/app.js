@@ -2,10 +2,12 @@ angular.module('soundMoods', [
 		'ngRoute',
 		'ngAnimate',
 		'soundMoods.controllers',
-		'facebook'
-	]).config(function($routeProvider, $locationProvider, FacebookProvider){
+		'soundMoods.config',
+		'facebook',
+		'firebase'
+	]).config(function($routeProvider, $locationProvider, FacebookProvider, FBID){
 
-		FacebookProvider.init('787246124637994');
+		FacebookProvider.init(FBID);
 		
 		// routes
 		$routeProvider

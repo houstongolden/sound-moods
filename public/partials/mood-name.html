@@ -3,7 +3,7 @@
 		<div class="mood-circle">
 			<div class="mood-name-input">
 				<h2 class="mood-color">{{mood.name}}</h2>
-				<input ng-model="mood.name" type="text" name="mood-name"></input>
+				<input ng-model="mood.name" ng-change="setMoodName(mood.name)" type="text" name="mood-name"></input>
 			</div>
 			<h2>Give your mood a <strong>name</strong>. <br><a href="#/moods/create/tracks">&rarr;</a></h2>
 		</div>

@@ -165,11 +165,10 @@ strong {
 	@include border-radius(50%);
 	@include box-shadow(rgba(68, 68, 68, 0.14) 0px 0px 10px);
 	@include transition(all 0.2s ease);
-	@include transform(scale(0.8));
 	width: 500px;
 	height: 500px;
 	margin: 0 auto;
-	margin-top: 2em;
+	margin-top: 4em;
 	text-align: center;
 	h2 {
 		position: relative;

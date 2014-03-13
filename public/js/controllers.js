@@ -1,7 +1,7 @@
 angular.module('soundMoods.controllers', ['apiService'])
 	.controller('AppCtrl', ['$scope', '$routeParams', '$location', 'Mood', 'Facebook', AppCtrl])
 	.controller('MoodCtrl', ['$scope', '$rootScope', '$location', MoodCtrl])
-	.controller('ApiCtrl', ['$scope', '$rootScope', '$location', '$routeParams', 'Mood', '$http', ApiCtrl])
+	.controller('ApiCtrl', ['$scope', '$rootScope', '$location', '$routeParams', 'Mood', '$http', '$firebase', ApiCtrl])
 	.controller('LoginCtrl', ['$scope', '$rootScope', LoginCtrl])
 	.controller('SingleMoodCtrl', ['$scope', '$routeParams', '$http', SingleMoodCtrl]);
 
@@ -105,27 +105,27 @@ function MoodCtrl($scope, $rootScope, $location){
 
 	var self = this;
 	
-	$scope.query = '';
+	$scope.mood.query = '';
 
-	setTimeout(function(){
-		$('.mood-circle').css({transform: 'scale(1)'});
-	}, 200);
+	$scope.setMoodColor = function(color){
+		$scope.mood.color = color;
+		$('.mood-color').css({'background-color': color});
+	    $('.mood-color-picker h2 > a').css({'background-color': color});
+	}
 
-	$('.mood-color-picker > input').on('change', function() {
-		$scope.mood.color = this.value;
-	    $('.mood-color').css({'background-color': this.value});
-	    $('.mood-color-picker h2 > a').css({'background-color': this.value});
-	});
+	$scope.setMoodName = function(name){
+		$scope.mood.name = name;
+	}
 
 	$('.mood-color').css({'color': $scope.mood.color});
-	
-	$('input[name="mood-name"]').change(function(){
-		$scope.mood.name = $(this).val();
-	});
-	
+	$('head').append('<style>.playing > a {color: ' + $scope.mood.color + ';}</style>');
+
 	this.API = API.init($scope);
 
-	$('head').append('<style>.playing > a {color: ' + $scope.mood.color + ';}</style>');
+	$scope.searchApi = function(query){
+		console.log(query)
+		self.API.search(query);
+	}
 
 	$('input[name="mood-track"]').change(function(){
 		$scope.query = $(this).val();
@@ -157,7 +157,7 @@ function MoodCtrl($scope, $rootScope, $location){
 	});
 }
 
-function ApiCtrl($scope, $rootScope, $location, $routeParams, Mood, $http){
+function ApiCtrl($scope, $rootScope, $location, $routeParams, Mood, $http, $firebase){
 	var self = this;
 
 	$scope.tracks = [];
@@ -211,6 +211,10 @@ function ApiCtrl($scope, $rootScope, $location, $routeParams, Mood, $http){
 					artwork: $track.find('img').attr('src')
 				});
 			});
+			
+			$scope.moods = $firebase(moodsRef);
+				// $scope.moodRef.$add($scope)
+				// $location.url('/moods');
 			$http.post('/moods', $scope.newMood).success(function(data){
 				$location.url('/moods');
 			});
@@ -289,8 +293,8 @@ function SingleMoodCtrl($scope, $routeParams, $http){
 			self.API.toggleTrack(e);
 		});
 	}
-	$http.get('/moods/' + $routeParams.id).success(function(data){
-		$scope.mood = data;
-		setTimeout(function(){ randomPosition(); }, 1000);
-	});
+	// $http.get('/moods/' + $routeParams.id).success(function(data){
+	// 	$scope.mood = data;
+	// 	setTimeout(function(){ randomPosition(); }, 1000);
+	// });
 }
