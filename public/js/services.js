@@ -1,7 +1,8 @@
 angular.module('soundMoods.services', ['ngResource', 'firebase'])
 	.factory('firebaseRef', ['Firebase', 'FIREURL', function(Firebase, FIREURL){
 		return function(path){
-			return new Firebase(pathRef([FIREURL].concat(Array.prototype.slice.call(arguments))));
+			var absPath = pathRef([FIREURL].concat(Array.prototype.slice.call(arguments))); 
+			return new Firebase(absPath);
 		}
 	}])
 	.factory('syncData', ['$firebase', 'firebaseRef', function($firebase, firebaseRef){
@@ -23,7 +24,8 @@ angular.module('soundMoods.services', ['ngResource', 'firebase'])
 			tracks: [{
 				name: 'EDX Track',
 				soundCloudId: 'id',
-				soundCloudUrl: 'http://soundcloud.com/edx/trackname'
+				soundCloudUrl: 'http://soundcloud.com/edx/trackname',
+				artwork: ''
 			}]
 		}
 	})

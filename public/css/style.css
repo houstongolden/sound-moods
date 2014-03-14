@@ -5882,11 +5882,22 @@ strong {
   border-radius: 50%;
 }
 
+.mood-player {
+  overflow: scroll;
+}
+.mood-player .mood-item {
+  position: relative;
+}
+
 .mood-tracks {
   position: relative;
   height: 100%;
 }
 .mood-tracks .big-mood-circle {
+  -webkit-transition: all 0.2s ease;
+  -moz-transition: all 0.2s ease;
+  -o-transition: all 0.2s ease;
+  transition: all 0.2s ease;
   position: absolute;
   background-color: #fff;
   left: -170%;
@@ -6021,10 +6032,30 @@ strong {
   left: 0;
   right: 0;
 }
-.mood-player-container .playing {
+.mood-player-container .mood-item .mood-circle-sm:after {
+  content: '';
+  position: absolute;
+  top: 45%;
+  left: 45%;
+  border-right: 10px solid transparent;
+  border-left: 20px solid #444;
+  border-bottom: 10px solid transparent;
+  border-top: 10px solid transparent;
+}
+.mood-player-container .mood-item .playing {
   -webkit-transform: scale(1.5);
   -moz-transform: scale(1.5);
   -ms-transform: scale(1.5);
   -o-transform: scale(1.5);
   transform: scale(1.5);
+}
+.mood-player-container .mood-item .playing:after {
+  content: '';
+  position: absolute;
+  top: 45%;
+  left: 45%;
+  border-right: 10px solid #444;
+  border-left: 10px solid #444;
+  border-bottom: 10px solid #444;
+  border-top: 10px solid #444;
 }

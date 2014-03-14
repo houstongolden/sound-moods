@@ -2,8 +2,8 @@
 	<div class="row">
 		<div class="col-md-12" style="margin-top: 200px">
 			<ul class="mood-home-list">
-				<li ng-repeat="mood in moods" class="mood-item">
-					<a ng-href="#/mood-player/{{mood._id}}" class="mood-circle-sm" style="background-image: url('{{mood.tracks[0].artwork}}'); background-repeat: no-repeat; background-size: cover"></a>
+				<li ng-repeat="(id, mood) in moods" class="mood-item">
+					<a mood ng-href="#/mood-player/{{id}}" class="mood-circle-sm" style="background-color: {{mood.color}}"></a>
 					<h4 style="color: {{mood.color}}">{{mood.name}}</h4>
 				</li>
 				<li class="mood-item">

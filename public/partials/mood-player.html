@@ -1,11 +1,9 @@
-<div class="row" style="background-color: {{mood.color}}">
+<div class="mood-player row" style="background-color: {{mood.color}}">
 	<div class="col-md-10 col-md-offset-1">
 		<h1 class="mood-title">{{mood.name}}</h1>
 		<p>{{currentPlaying}}</p>
 		<ul class="mood-player-container">
-			<li ng-repeat="track in mood.tracks" class="random-color mood-item">
-				<a href="#" data-name="{{track.name}}" data-track-id="{{track.soundCloudId}}" class="mood-circle-sm" style="background-color: {{track.color}}');"></a>
-			</li>
+			<mood-color ng-repeat="track in mood.tracks"></mood-color>
 		</ul>
 	</div>
 </div>

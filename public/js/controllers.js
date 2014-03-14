@@ -2,13 +2,17 @@ angular.module('soundMoods.controllers', [])
 	.controller('AppCtrl', ['$scope', '$routeParams', '$location', 'Facebook', 'syncData', 'User', AppCtrl])
 	.controller('LoginCtrl', ['$scope', '$rootScope', LoginCtrl])
 	.controller('MoodCtrl', ['$scope', '$rootScope', '$location','Mood', MoodCtrl])
-	.controller('ApiCtrl', ['$scope', '$rootScope', '$location', '$routeParams', '$http', '$firebase', 'Mood', ApiCtrl])
-	.controller('SingleMoodCtrl', ['$scope', '$routeParams', '$http', SingleMoodCtrl]);
+	.controller('ApiCtrl', ['$scope', '$rootScope', '$location', '$routeParams', 'syncData', 'Mood', ApiCtrl])
+	.controller('SingleMoodCtrl', ['$scope', '$routeParams', 'syncData', SingleMoodCtrl]);
 
 function AppCtrl($scope, $routeParams, $location, Facebook, syncData, User){
 
 	$scope.user = User;
 	$scope.moods = syncData('moods', 10);
+	$scope.current = {
+		sound: null,
+		playing: false
+	};
 
 	$scope.$watch(function(){
 		return Facebook.isReady();
@@ -102,9 +106,9 @@ function LoginCtrl($scope, $rootScope){
 function MoodCtrl($scope, $rootScope, $location, Mood){
 
 	var self = this;
-	this.API = API.init($scope);
 
 	$scope.mood = Mood;
+	$scope.mood.name = '';
 
 	$scope.setMoodColor = function(color){
 		$scope.mood.color = color;
@@ -116,59 +120,22 @@ function MoodCtrl($scope, $rootScope, $location, Mood){
 		$scope.mood.name = name;
 	}
 
-	$scope.addMood = function(mood){
-		$scope.moods.$add(mood);
-		mood = null;
-	}
-
-	$scope.searchApi = function(query){
-		console.log(query)
-		self.API.search(query);
-	}
-
 	$('.mood-color').css({'color': $scope.mood.color});
 	$('head').append('<style>.playing > a {color: ' + $scope.mood.color + ';}</style>');
 
-	// $('.big-mood-circle').droppable({
-	// 	drag: function(){
-	// 		if(!$(this).css({color: "#ccc"})){
-	// 			$(this).css({
-	// 				color: '#ccc'
-	// 			});
-	// 		}
-	// 	},
-	// 	drop: function(e, ui){
-	// 		var el = $(ui.draggable).detach();
-	// 		$(this).find('.tracks-selected-list').append(el);
-	// 	}
-	// });
-
-	// $('#create-mood').click(function(){
-	// 	$scope.selectedTracks = [];
-	// 	$('.tracks-selected-list li').each(function(){
-	// 		$scope.selectedTracks.push({ trackId: $(this).data('track-id') });
-	// 	});
-	// });
 }
 
-function ApiCtrl($scope, $rootScope, $location, $routeParams, $http, $firebase, Mood){
+function ApiCtrl($scope, $rootScope, $location, $routeParams, $firebase, Mood){
 	var self = this;
 
-	$scope.tracks = [];
 	$scope.query = '';
 	$scope.mood = Mood;
-	$scope.current = {
-		sound: null,
-		playing: false
-	};
-
-	this.API = API.init($scope);
+	$scope.mood.tracks = [];
 
 	$('.mood-color').css({'color': $scope.mood.color});
 	$('head').append('<style>.playing > a {color: ' + $scope.mood.color + ';}</style>');
 
 	$scope.search = function($event, query){
-
 		var pageSize = 20;
 		var offset = 0;		
 		if($event.keyCode == 13){
@@ -180,7 +147,6 @@ function ApiCtrl($scope, $rootScope, $location, $routeParams, $http, $firebase, 
 				})
 			});
 		}
-
 	}
 
 	$scope.toggleTrack = function(track){
@@ -197,99 +163,16 @@ function ApiCtrl($scope, $rootScope, $location, $routeParams, $http, $firebase, 
 		}
 	}
 
-	$scope.addTrack = function(track){
-
-	}
-
 	$scope.createMood = function(mood){
-
+		$scope.moods.$add(mood);
+		$location.url('/moods');
 	}
-	// $('.big-mood-circle').droppable({
-	// 	drag: function(){
-	// 		if(!$(this).css({color: "#ccc"})){
-	// 			$(this).css({
-	// 				color: '#ccc'
-	// 			});
-	// 		}
-	// 	},
-	// 	drop: function(e, ui){
-	// 		var el = $(ui.draggable).detach();
-	// 		$(this).find('.tracks-selected-list').append(el);
-	// 	}
-	// });
+
 }
 
-function SingleMoodCtrl($scope, $routeParams, $http){
+function SingleMoodCtrl($scope, $routeParams, syncData){
 	
 	var self = this;
-	this.API = API.init($scope);
+	$scope.mood = syncData('moods/' + $routeParams.id);
 
-	function hexToRgb(hex) {
-	    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-	    return result ? {
-	        r: parseInt(result[1], 16),
-	        g: parseInt(result[2], 16),
-	        b: parseInt(result[3], 16)
-	    } : null;
-	}
-	function randColor(base){
-		var rand = Math.random();
-		var randomOffset = function(){
-			return (Math.random() * 10) % 255;
-		}
-		var newColor = {};
-		if(rand > 0.5){
-			for(var color in base){
-				newColor[color] = Math.floor(base[color] + randomOffset())
-			}
-		}else {
-			for(var color in base){
-				newColor[color] = Math.floor(base[color] - randomOffset())
-			}
-		}
-		return newColor;
-	}
-	function randomPosition(){
-		var rgbaBase = hexToRgb($scope.mood.color);
-
-		$('.mood-item').each(function(){
-			
-			var rand = (Math.random() * 1000);
-			var diameter = rand + 120;
-			var margin = 50;
-			var lastPos = {
-				rand: rand,
-				diameter: diameter
-			};
-
-			var checkPos = function(pos){
-				for(var i = 0; i < lastPos.diameter; i++){
-					if (lastPos.rand == i){
-						// push off that position (artificial intelligence)
-						pos += lastPos.margin
-					}
-				}
-				return pos;
-			}
-
-			$(this).css({
-				opacity: 1,
-				top: Math.floor(checkPos(Math.random() * 500)),
-				left: Math.floor(checkPos(Math.random() * 500))
-			});
-
-			var color = randColor(rgbaBase);
-			$(this).find('a').css({
-				'background-color': 'rbg(' + color.r + ',' + color.g + ','+ color.b + ')'
-			});
-		}).on('click', function(e){
-			$scope.currentPlaying = $(this).data('name');
-			self.API.stopAllPlaying(e);
-			self.API.toggleTrack(e);
-		});
-	}
-	// $http.get('/moods/' + $routeParams.id).success(function(data){
-	// 	$scope.mood = data;
-	// 	setTimeout(function(){ randomPosition(); }, 1000);
-	// });
 }

@@ -321,10 +321,17 @@ strong {
 	margin-right: 0.5em;
 	@include border-radius(50%);;
 }
+.mood-player {
+	overflow: scroll;
+	.mood-item {
+		position: relative;
+	}
+}
 .mood-tracks {
 	position: relative;
 	height: 100%;
 	.big-mood-circle {
+		@include transition(all 0.2s ease);
 		position: absolute;
 		background-color: #fff;
 		left: -170%;
@@ -416,8 +423,30 @@ strong {
 		position: absolute;
 		left: 0;
 		right: 0;
-	}
-	.playing {
-		@include transform(scale(1.5));
+		.mood-circle-sm {
+			&:after {
+				content: '';
+				position: absolute;
+				top: 45%;
+				left: 45%;
+				border-right: 10px solid transparent;
+				border-left: 20px solid #444;
+				border-bottom: 10px solid transparent;
+				border-top: 10px solid transparent;
+			}
+		}
+		.playing {
+			@include transform(scale(1.5));
+			&:after {
+				content: '';
+				position: absolute;
+				top: 45%;
+				left: 45%;
+				border-right: 10px solid #444;
+				border-left: 10px solid #444;
+				border-bottom: 10px solid #444;
+				border-top: 10px solid #444;
+			}
+		}
 	}
 }
